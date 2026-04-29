@@ -1,11 +1,10 @@
 import 'package:get/get.dart';
 
-import 'package:getx_state_management/app.dart';
+import 'package:getx_state_management/core/routes/app_routes.dart';
 import 'package:getx_state_management/features/auth/domain/models/user_model.dart';
 import 'package:getx_state_management/features/auth/domain/usecases/get_saved_token_usecase.dart';
 import 'package:getx_state_management/features/auth/domain/usecases/login_usecase.dart';
 import 'package:getx_state_management/features/auth/domain/usecases/logout_usecase.dart';
-import 'package:getx_state_management/features/product/presentation/controllers/product_controller.dart';
 
 class AuthController extends GetxController {
   AuthController(
@@ -34,7 +33,7 @@ class AuthController extends GetxController {
     if (result.isSuccess) {
       currentUser.value = result.data;
       isAuthenticated.value = true;
-      await Get.find<ProductController>().loadInitialProducts();
+      // Product list akan load sendiri lewat ProductListController.onReady
       Get.offAllNamed(AppRoutes.products);
     } else {
       errorMessage.value = result.failure?.message ?? 'Gagal login.';
@@ -47,7 +46,6 @@ class AuthController extends GetxController {
     isLoading.value = true;
     await _logoutUseCase();
     _clearState();
-    Get.find<ProductController>().clearState();
     isLoading.value = false;
     Get.offAllNamed(AppRoutes.login);
   }
@@ -56,7 +54,6 @@ class AuthController extends GetxController {
     final token = _getSavedTokenUseCase();
     if (token is String && token.isNotEmpty) {
       isAuthenticated.value = true;
-      await Get.find<ProductController>().loadInitialProducts();
       Get.offAllNamed(AppRoutes.products);
       return;
     }
@@ -66,9 +63,6 @@ class AuthController extends GetxController {
   Future<void> logoutFromInterceptor() async {
     await _logoutUseCase();
     _clearState();
-    if (Get.isRegistered<ProductController>()) {
-      Get.find<ProductController>().clearState();
-    }
   }
 
   void _clearState() {

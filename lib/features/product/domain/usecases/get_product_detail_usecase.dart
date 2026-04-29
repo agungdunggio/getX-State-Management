@@ -7,6 +7,5 @@ class GetProductDetailUseCase {
 
   final ProductRepository _repository;
 
-  Future<Result<ProductModel>> call(int id) =>
-      _repository.getProductDetail(id);
+  Future<Result<ProductModel>> call(int id) => _repository.getProductDetail(id);
 }

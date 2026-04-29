@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:getx_state_management/features/product/presentation/controllers/product_controller.dart';
+import 'package:getx_state_management/core/routes/app_routes.dart';
+import 'package:getx_state_management/features/product/presentation/controllers/product_detail_controller.dart';
 
-class ProductDetailPage extends StatefulWidget {
+class ProductDetailPage extends GetView<ProductDetailController> {
   const ProductDetailPage({super.key});
-
-  @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
-}
-
-class _ProductDetailPageState extends State<ProductDetailPage> {
-  late final ProductController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = Get.find<ProductController>();
-    final id = Get.arguments as int?;
-    if (id != null) {
-      Future.microtask(() => _controller.loadProductDetail(id));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Product Detail')),
       body: Obx(() {
-        if (_controller.isLoadingDetail.value) {
+        if (controller.isLoadingDetail.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final error = _controller.detailErrorMessage.value;
+        final error = controller.detailErrorMessage.value;
         if (error != null) {
           return Center(child: Text(error));
         }
 
-        final product = _controller.selectedProduct.value;
+        final product = controller.selectedProduct.value;
         if (product == null) {
           return const SizedBox.shrink();
         }
@@ -72,11 +56,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
               const SizedBox(height: 8),
               Obx(() {
-                if (_controller.isLoadingRecommendations.value) {
+                if (controller.isLoadingRecommendations.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 final recommendationError =
-                    _controller.recommendationErrorMessage.value;
+                    controller.recommendationErrorMessage.value;
                 if (recommendationError != null) {
                   return Text(recommendationError);
                 }
@@ -84,17 +68,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   height: 200,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _controller.recommendations.length,
+                    itemCount: controller.recommendations.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(width: 12),
                     itemBuilder: (context, index) {
-                      final recommended = _controller.recommendations[index];
+                      final recommended = controller.recommendations[index];
                       return SizedBox(
                         width: 160,
                         child: Card(
                           child: InkWell(
-                            onTap: () =>
-                                _controller.loadProductDetail(recommended.id),
+                            onTap: () => Get.toNamed(
+                              AppRoutes.productDetail,
+                              arguments: recommended.id,
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: Column(

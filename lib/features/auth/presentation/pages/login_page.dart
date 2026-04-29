@@ -1,34 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:getx_state_management/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:getx_state_management/features/auth/presentation/controllers/login_controller.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController(text: 'emilys');
-  final _passwordController = TextEditingController(text: 'emilyspass');
-  final _formKey = GlobalKey<FormState>();
-
-  late final AuthController _authController;
-
-  @override
-  void initState() {
-    super.initState();
-    _authController = Get.find<AuthController>();
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +13,11 @@ class _LoginPageState extends State<LoginPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: _formKey,
+          key: controller.formKey,
           child: Column(
             children: [
               TextFormField(
-                controller: _usernameController,
+                controller: controller.usernameController,
                 decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) => value == null || value.isEmpty
                     ? 'Username wajib diisi'
@@ -49,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 12),
               TextFormField(
-                controller: _passwordController,
+                controller: controller.passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(labelText: 'Password'),
                 validator: (value) => value == null || value.isEmpty
@@ -58,11 +34,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 16),
               Obx(() {
-                final isLoading = _authController.isLoading.value;
+                final isLoading = controller.isLoading.value;
                 return SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : _onLoginTap,
+                    onPressed: isLoading ? null : controller.submitLogin,
                     child: isLoading
                         ? const SizedBox(
                             height: 20,
@@ -75,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
               }),
               const SizedBox(height: 8),
               Obx(() {
-                final error = _authController.errorMessage.value;
+                final error = controller.errorMessage.value;
                 if (error == null) {
                   return const SizedBox.shrink();
                 }
@@ -85,16 +61,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
-
-  void _onLoginTap() {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    _authController.login(
-      username: _usernameController.text.trim(),
-      password: _passwordController.text.trim(),
     );
   }
 }

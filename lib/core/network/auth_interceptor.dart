@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'package:getx_state_management/app.dart';
+import 'package:getx_state_management/core/routes/app_routes.dart';
 import 'package:getx_state_management/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:getx_state_management/core/constants/storage_keys.dart';
 

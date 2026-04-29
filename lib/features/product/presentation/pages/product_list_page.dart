@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:getx_state_management/app.dart';
+import 'package:getx_state_management/core/routes/app_routes.dart';
 import 'package:getx_state_management/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:getx_state_management/features/product/presentation/controllers/product_controller.dart';
+import 'package:getx_state_management/features/product/presentation/controllers/product_list_controller.dart';
 import 'package:getx_state_management/features/product/presentation/widgets/product_list_item.dart';
 
-class ProductListPage extends GetView<ProductController> {
+class ProductListPage extends GetView<ProductListController> {
   const ProductListPage({super.key});
 
   @override
