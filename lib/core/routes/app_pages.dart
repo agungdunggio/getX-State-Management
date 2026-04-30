@@ -6,7 +6,6 @@ import 'package:getx_state_management/features/auth/presentation/bindings/login_
 import 'package:getx_state_management/features/auth/presentation/bindings/splash_binding.dart';
 import 'package:getx_state_management/features/auth/presentation/pages/login_page.dart';
 import 'package:getx_state_management/features/auth/presentation/pages/splash_page.dart';
-import 'package:getx_state_management/features/product/presentation/bindings/product_detail_binding.dart';
 import 'package:getx_state_management/features/product/presentation/bindings/product_list_binding.dart';
 import 'package:getx_state_management/features/product/presentation/pages/product_detail_page.dart';
 import 'package:getx_state_management/features/product/presentation/pages/product_list_page.dart';
@@ -28,10 +27,6 @@ class AppPages {
       page: ProductListPage.new,
       bindings: [AuthBinding(), ProductListBinding()],
     ),
-    GetPage(
-      name: AppRoutes.productDetail,
-      page: ProductDetailPage.new,
-      binding: ProductDetailBinding(),
-    ),
+    GetPage(name: AppRoutes.productDetail, page: ProductDetailPage.new),
   ];
 }

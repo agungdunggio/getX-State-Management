@@ -2,26 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:getx_state_management/core/routes/app_routes.dart';
+import 'package:getx_state_management/features/product/domain/usecases/get_product_detail_usecase.dart';
+import 'package:getx_state_management/features/product/domain/usecases/get_recommendations_usecase.dart';
 import 'package:getx_state_management/features/product/presentation/controllers/product_detail_controller.dart';
 
-class ProductDetailPage extends GetView<ProductDetailController> {
+class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({super.key});
+
+  @override
+  State<ProductDetailPage> createState() => _ProductDetailPageState();
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  late final ProductDetailController _controller;
+  late final String _controllerTag;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllerTag = UniqueKey().toString();
+    _controller = Get.put<ProductDetailController>(
+      ProductDetailController(
+        Get.find<GetProductDetailUseCase>(),
+        Get.find<GetRecommendationsUseCase>(),
+      ),
+      tag: _controllerTag,
+    );
+    _controller.initialize(Get.arguments as int?);
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<ProductDetailController>(tag: _controllerTag)) {
+      Get.delete<ProductDetailController>(tag: _controllerTag, force: true);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Product Detail')),
       body: Obx(() {
-        if (controller.isLoadingDetail.value) {
+        if (_controller.isLoadingDetail.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final error = controller.detailErrorMessage.value;
+        final error = _controller.detailErrorMessage.value;
         if (error != null) {
           return Center(child: Text(error));
         }
 
-        final product = controller.selectedProduct.value;
+        final product = _controller.selectedProduct.value;
         if (product == null) {
           return const SizedBox.shrink();
         }
@@ -56,11 +88,11 @@ class ProductDetailPage extends GetView<ProductDetailController> {
               ),
               const SizedBox(height: 8),
               Obx(() {
-                if (controller.isLoadingRecommendations.value) {
+                if (_controller.isLoadingRecommendations.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 final recommendationError =
-                    controller.recommendationErrorMessage.value;
+                    _controller.recommendationErrorMessage.value;
                 if (recommendationError != null) {
                   return Text(recommendationError);
                 }
@@ -68,11 +100,11 @@ class ProductDetailPage extends GetView<ProductDetailController> {
                   height: 200,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: controller.recommendations.length,
+                    itemCount: _controller.recommendations.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(width: 12),
                     itemBuilder: (context, index) {
-                      final recommended = controller.recommendations[index];
+                      final recommended = _controller.recommendations[index];
                       return SizedBox(
                         width: 160,
                         child: Card(
@@ -80,6 +112,7 @@ class ProductDetailPage extends GetView<ProductDetailController> {
                             onTap: () => Get.toNamed(
                               AppRoutes.productDetail,
                               arguments: recommended.id,
+                              preventDuplicates: false,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8),

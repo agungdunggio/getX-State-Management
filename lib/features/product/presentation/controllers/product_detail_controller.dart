@@ -20,15 +20,12 @@ class ProductDetailController extends GetxController {
   final detailErrorMessage = RxnString();
   final recommendationErrorMessage = RxnString();
 
-  @override
-  void onReady() {
-    super.onReady();
-    final id = Get.arguments as int?;
-    if (id != null) {
-      loadProductDetail(id);
-    } else {
+  Future<void> initialize(int? id) async {
+    if (id == null) {
       detailErrorMessage.value = 'ID produk tidak valid.';
+      return;
     }
+    await loadProductDetail(id);
   }
 
   Future<void> loadProductDetail(int id) async {
